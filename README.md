@@ -31,17 +31,17 @@ fine-tuned versions on a task that interests you.
 Here is how to use this model to classify an image of the COCO 2017 dataset into one of the 1,000 ImageNet classes:
 
 ```python
-from transformers import AutoFeatureExtractor, ResNetForImageClassification
+from transformers import AutoImageProcessor, ResNetForImageClassification
 import torch
 from datasets import load_dataset
 
 dataset = load_dataset("huggingface/cats-image")
 image = dataset["test"]["image"][0]
 
-feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/resnet-50")
+processor = AutoImageProcessor.from_pretrained("microsoft/resnet-50")
 model = ResNetForImageClassification.from_pretrained("microsoft/resnet-50")
 
-inputs = feature_extractor(image, return_tensors="pt")
+inputs = processor(image, return_tensors="pt")
 
 with torch.no_grad():
     logits = model(**inputs).logits
