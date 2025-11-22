@@ -8,9 +8,10 @@ const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const pythonExecutable = process.env.PYTHON_EXECUTABLE || "python3";
 
 // Determine Python executable path (prefer venv if it exists)
-let pythonExecutable = 'python';
+// let pythonExecutable = 'python';
 const venvPythonPath = path.join(__dirname, 'venv', process.platform === 'win32' ? 'Scripts' : 'bin', 'python' + (process.platform === 'win32' ? '.exe' : ''));
 if (fs.existsSync(venvPythonPath)) {
   pythonExecutable = venvPythonPath;
@@ -44,7 +45,7 @@ app.post('/classify', upload.single('image'), (req, res) => {
 
   // Create a temporary file to pass to Python script
   const tempFilePath = path.join(__dirname, 'temp_image_' + Date.now() + '.jpg');
-  
+
   // Write the buffer to a temporary file
   fs.writeFileSync(tempFilePath, req.file.buffer);
 
@@ -71,9 +72,9 @@ app.post('/classify', upload.single('image'), (req, res) => {
 
     if (code !== 0) {
       console.error('Python script error:', errorOutput);
-      return res.status(500).json({ 
-        error: 'Classification failed', 
-        details: errorOutput 
+      return res.status(500).json({
+        error: 'Classification failed',
+        details: errorOutput
       });
     }
 
@@ -87,7 +88,7 @@ app.post('/classify', upload.single('image'), (req, res) => {
       });
     } catch (parseError) {
       console.error('Failed to parse Python output:', output);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Failed to parse classification result',
         details: output
       });
